@@ -121,7 +121,7 @@ genType (GadtC   _ tArgs' (AppT eff tRet)) = do
     resultType       = ConT ''Eff `AppT` VarT effs `AppT` tRet
 
   return
-    .  ForallT [PlainTV effs] [memberConstraint]
+    .  ForallT [PlainTV effs SpecifiedSpec] [memberConstraint]
     .  foldArrows
     $  tArgs
     ++ [resultType]
@@ -141,8 +141,8 @@ simplifyBndrs t = t
 
 -- | Turn TvVarBndrs of the form (KindedTV tv StarT) into (PlainTV tv)
 -- This can prevent the need for KindSignatures
-simplifyBndr :: TyVarBndr -> TyVarBndr
-simplifyBndr (KindedTV tv StarT) = PlainTV tv
+simplifyBndr :: TyVarBndr flag -> TyVarBndr flag
+simplifyBndr (KindedTV tv flag StarT) = PlainTV tv flag
 simplifyBndr bndr = bndr
 
 -- | Generates a type signature of the form
